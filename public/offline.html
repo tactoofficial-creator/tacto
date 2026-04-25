@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Tacto — Offline</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #FFFFFF;
+        color: #1A1A1A;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 32px;
+        text-align: center;
+        gap: 24px;
+      }
+      .logo {
+        width: 64px;
+        height: 64px;
+        background: #1A1A1A;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+      .logo span {
+        color: #4A7C6F;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+      }
+      h1 {
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #1A1A1A;
+      }
+      p {
+        font-size: 16px;
+        color: #737373;
+        line-height: 1.5;
+        max-width: 280px;
+      }
+      button {
+        margin-top: 8px;
+        padding: 14px 28px;
+        background: #1A1A1A;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      button:active { opacity: 0.7; }
+    </style>
+  </head>
+  <body>
+    <div class="logo"><span>T</span></div>
+    <div>
+      <h1>You are offline</h1>
+    </div>
+    <p>Check your connection and try again. Your bookings and messages will sync when you're back online.</p>
+    <button onclick="window.location.reload()">Try again</button>
+  </body>
+</html>

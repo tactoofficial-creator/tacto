@@ -33,6 +33,12 @@
   </head>
   <body class="overscroll-none">
     <div id="root"></div>
+    <script>
+      window.onerror = function(msg, src, line, col, err) {
+        document.body.style.cssText = 'margin:0;padding:24px;font-family:monospace;font-size:13px;background:#fff;color:#c00';
+        document.body.innerHTML = '<b>ERR:</b> ' + msg + '<br><small>' + (src||'') + ':' + line + '</small>' + (err ? '<pre style="margin-top:8px;font-size:11px;white-space:pre-wrap">' + err.stack + '</pre>' : '');
+      };
+    </script>
     <!-- SW nuke: runs once per deploy to clear stale service workers and caches -->
     <script>
       (function() {

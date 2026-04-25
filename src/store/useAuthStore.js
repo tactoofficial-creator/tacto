@@ -12,7 +12,6 @@ export const useAuthStore = create(
       user: null,
       session: null,
       loading: true,
-      hasOnboarded: false,
 
       init: async () => {
         if (USE_MOCK) {
@@ -66,10 +65,8 @@ export const useAuthStore = create(
 
       signOut: async () => {
         if (!USE_MOCK) await supabase.auth.signOut()
-        set({ user: null, session: null, hasOnboarded: false })
+        set({ user: null, session: null })
       },
-
-      setOnboarded: () => set({ hasOnboarded: true }),
 
       updateProfile: async (updates) => {
         if (USE_MOCK) {
@@ -85,9 +82,6 @@ export const useAuthStore = create(
         set({ user: data })
       },
     }),
-    {
-      name: 'tacto-auth',
-      partialize: (s) => ({ hasOnboarded: s.hasOnboarded }),
-    }
+    { name: 'tacto-auth' }
   )
 )

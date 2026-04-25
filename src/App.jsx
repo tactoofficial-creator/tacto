@@ -8,7 +8,6 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useStore } from '@/store/useStore'
 
 // Pages
-import Onboarding        from '@/pages/Onboarding'
 import Auth              from '@/pages/Auth'
 import Home              from '@/pages/Home'
 import Explore           from '@/pages/Explore'
@@ -27,9 +26,8 @@ function ProtectedRoute({ children }) {
 }
 
 export default function App() {
-  const init          = useAuthStore(s => s.init)
-  const hasOnboarded  = useAuthStore(s => s.hasOnboarded)
-  const loading       = useAuthStore(s => s.loading)
+  const init    = useAuthStore(s => s.init)
+  const loading = useAuthStore(s => s.loading)
   const setInstall    = useStore(s => s.setInstallPrompt)
   const darkMode      = useStore(s => s.darkMode)
 
@@ -85,13 +83,9 @@ export default function App() {
         <InstallPrompt />
 
         <Routes>
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/auth"       element={<Auth />} />
+          <Route path="/auth" element={<Auth />} />
           <Route element={<Layout />}>
-            <Route
-              path="/"
-              element={hasOnboarded ? <Home /> : <Navigate to="/onboarding" replace />}
-            />
+            <Route path="/" element={<Home />} />
             <Route path="/explore"           element={<Explore />} />
             <Route path="/experiences/:id"   element={<ExperienceDetail />} />
             <Route path="/hosts/:id"         element={<HostProfile />} />

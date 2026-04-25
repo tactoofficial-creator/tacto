@@ -19,21 +19,28 @@ export const useAuthStore = create(
           set({ user: mockUser, loading: false })
           return
         }
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session) {
-          const profile = await get().fetchProfile(session.user.id)
-          set({ session, user: profile, loading: false })
-        } else {
-          set({ loading: false })
-        }
-        supabase.auth.onAuthStateChange(async (event, session) => {
+        const timeout = setTimeout(() => set({ loading: false }), 4000)
+        try {
+          const { data: { session } } = await supabase.auth.getSession()
+          clearTimeout(timeout)
           if (session) {
             const profile = await get().fetchProfile(session.user.id)
-            set({ session, user: profile })
+            set({ session, user: profile, loading: false })
           } else {
-            set({ session: null, user: null })
+            set({ loading: false })
           }
-        })
+          supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session) {
+              const profile = await get().fetchProfile(session.user.id)
+              set({ session, user: profile })
+            } else {
+              set({ session: null, user: null })
+            }
+          })
+        } catch {
+          clearTimeout(timeout)
+          set({ loading: false })
+        }
       },
 
       fetchProfile: async (id) => {

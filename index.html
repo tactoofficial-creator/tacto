@@ -42,7 +42,7 @@
     <!-- SW nuke: runs once per deploy to clear stale service workers and caches -->
     <script>
       (function() {
-        var DEPLOY = 'v7';
+        var DEPLOY = 'v8';
         if (localStorage.getItem('sw_deploy') !== DEPLOY) {
           localStorage.setItem('sw_deploy', DEPLOY);
           function reload() { window.location.reload(true); }

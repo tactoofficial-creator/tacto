@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   ArrowLeft, Heart, Share2, MapPin, Clock, Users,
   Calendar, ChevronRight, Star, Shield, AlertCircle, ChevronDown
@@ -60,21 +60,17 @@ export default function ExperienceDetail() {
   const isLongDesc = description?.length > DESC_LIMIT
 
   return (
-    <div className="flex flex-col bg-white min-h-screen-safe">
+    <div className="bg-white">
       {/* Hero photos */}
       <div className="relative overflow-hidden bg-warm-200" style={{ height: '56vh', minHeight: 320 }}>
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={photoIdx}
-            src={photos[photoIdx]}
-            alt={title}
-            className="absolute inset-0 w-full h-full object-cover"
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+        {photos.map((photo, i) => (
+          <img
+            key={i}
+            src={photo}
+            alt={i === 0 ? title : ''}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${i === photoIdx ? 'opacity-100' : 'opacity-0'}`}
           />
-        </AnimatePresence>
+        ))}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
 
         {/* Back + actions */}
@@ -129,7 +125,7 @@ export default function ExperienceDetail() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto scrollbar-none pb-32">
+      <div className="pb-40">
         <div className="px-5 pt-5">
           {/* Pill stats */}
           <div className="flex gap-2 flex-wrap mb-6">

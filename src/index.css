@@ -80,6 +80,7 @@
 
   .pb-nav { padding-bottom: calc(68px + env(safe-area-inset-bottom)); }
   .h-screen-safe { height: 100dvh; }
+  .min-h-screen-safe { min-height: 100dvh; }
 
   .glass {
     backdrop-filter: blur(12px) saturate(180%);

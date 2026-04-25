@@ -16,12 +16,15 @@
 
   html { scroll-behavior: smooth; overscroll-behavior: none; }
 
+  html {
+    text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-white text-charcoal antialiased;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Dark mode body */

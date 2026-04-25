@@ -6,11 +6,21 @@ export function Skeleton({ className }) {
   )
 }
 
-export function ExperienceCardSkeleton({ size = 'md' }) {
-  const heights = { sm: 'h-64', md: 'h-80', lg: 'h-96' }
+export function ExperienceCardSkeleton() {
   return (
-    <div className={`${heights[size]} w-full rounded-3xl overflow-hidden`}>
-      <Skeleton className="w-full h-full rounded-3xl" />
+    <div className="bg-white rounded-3xl overflow-hidden shadow-card">
+      <Skeleton className="w-full h-56" />
+      <div className="p-4 space-y-3">
+        <Skeleton className="h-5 w-3/4" />
+        <div className="flex items-center gap-3">
+          <Skeleton className="w-8 h-8 rounded-full" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <div className="flex justify-between">
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-12" />
+        </div>
+      </div>
     </div>
   )
 }

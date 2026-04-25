@@ -62,20 +62,20 @@ export default function ExperienceDetail() {
   return (
     <div className="flex flex-col bg-white min-h-screen-safe">
       {/* Hero photos */}
-      <div className="relative overflow-hidden bg-warm-200" style={{ height: '46vh' }}>
+      <div className="relative overflow-hidden bg-warm-200" style={{ height: '56vh', minHeight: 320 }}>
         <AnimatePresence mode="wait">
           <motion.img
             key={photoIdx}
             src={photos[photoIdx]}
             alt={title}
             className="absolute inset-0 w-full h-full object-cover"
-            initial={{ opacity: 0, scale: 1.03 }}
+            initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5 }}
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
 
         {/* Back + actions */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top)+10px)]">
@@ -96,44 +96,45 @@ export default function ExperienceDetail() {
           </div>
         </div>
 
-        {/* Photo dots + category */}
-        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
-          <Badge variant="charcoal" className="text-sm">
-            {getCategoryEmoji(category)} {getCategoryLabel(category)}
-          </Badge>
-          {photos.length > 1 && (
-            <div className="flex gap-1.5">
-              {photos.map((_, i) => (
-                <button key={i} onClick={() => setPhotoIdx(i)}
-                  className={`rounded-full transition-all duration-200 ${i === photoIdx ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'}`}
-                />
-              ))}
-            </div>
-          )}
+        {/* Bottom overlay — title + meta over photo */}
+        <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white text-xs font-semibold">
+              {getCategoryEmoji(category)} <span className="capitalize">{getCategoryLabel(category)}</span>
+            </span>
+            {rating && (
+              <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                <span className="text-xs font-semibold text-white">{rating.toFixed(1)}</span>
+                <span className="text-xs text-white/60">({review_count})</span>
+              </span>
+            )}
+          </div>
+          <h1 className="text-[22px] font-bold text-white leading-snug mb-2">{title}</h1>
+          <span className="flex items-center gap-1.5 text-xs text-white/70 font-medium">
+            <MapPin className="w-3 h-3" />{neighborhood}, {city}{distance ? ` · ${formatDistance(distance)}` : ''}
+          </span>
         </div>
+
+        {/* Photo dot indicators */}
+        {photos.length > 1 && (
+          <div className="absolute top-[calc(env(safe-area-inset-top)+60px)] right-4 flex flex-col gap-1.5">
+            {photos.map((_, i) => (
+              <button key={i} onClick={() => setPhotoIdx(i)}
+                className={`rounded-full transition-all duration-200 ${i === photoIdx ? 'h-4 w-1.5 bg-white' : 'h-1.5 w-1.5 bg-white/50'}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto scrollbar-none pb-32">
         <div className="px-5 pt-5">
-          <h1 className="text-2xl font-bold text-charcoal leading-snug mb-3">{title}</h1>
-
-          <div className="flex items-center gap-3 mb-5 text-sm text-charcoal-400 flex-wrap">
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-sage" />
-              {neighborhood}, {city}{distance ? ` · ${formatDistance(distance)}` : ''}
-            </span>
-            {rating && <Stars rating={rating} count={review_count} size="sm" />}
-          </div>
-
           {/* Pill stats */}
           <div className="flex gap-2 flex-wrap mb-6">
             <PillStat icon={<Clock className="w-3.5 h-3.5" />} label={formatDuration(duration)} />
             <PillStat icon={<Users className="w-3.5 h-3.5" />} label={`max ${max_participants}`} />
-            <PillStat
-              icon={<Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />}
-              label={`${rating?.toFixed(1)} (${review_count} rec.)`}
-            />
           </div>
 
           <Divider />

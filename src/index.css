@@ -98,3 +98,5 @@
 .leaflet-container { font-family: inherit; border-radius: inherit; }
 .leaflet-control-attribution { font-size: 10px !important; }
 .leaflet-control-zoom { display: none; }
+/* Suppress IE-only filter that causes CSS parse warnings in modern browsers */
+.leaflet-oldie .leaflet-popup-tip { filter: none; }

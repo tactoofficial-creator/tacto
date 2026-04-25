@@ -1,108 +1,200 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, Clock, Users } from 'lucide-react'
-import { Avatar } from '@/components/ui/Avatar'
-import { Stars } from '@/components/ui/Stars'
+import { Heart, Star, MapPin, Clock } from 'lucide-react'
 import { formatPrice, formatDistance, formatDuration, getCategoryEmoji } from '@/lib/utils'
 
-export function ExperienceCard({ experience, index = 0 }) {
+// ── Full-bleed photo card (vertical, premium) ───────────────────────────────
+export function ExperienceCard({ experience, index = 0, size = 'md' }) {
   const navigate = useNavigate()
+  const [saved, setSaved] = useState(false)
   const { id, title, category, photos, host, price, distance, duration, rating, review_count } = experience
+
+  const heights = { sm: 'h-64', md: 'h-80', lg: 'h-96' }
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-      whileTap={{ scale: 0.98 }}
+      transition={{ delay: index * 0.07, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      whileTap={{ scale: 0.975 }}
       onClick={() => navigate(`/experiences/${id}`)}
-      className="bg-white rounded-3xl overflow-hidden shadow-card cursor-pointer select-none"
+      className={`relative ${heights[size]} rounded-3xl overflow-hidden cursor-pointer select-none flex-shrink-0 w-full`}
     >
       {/* Photo */}
-      <div className="relative w-full h-56 overflow-hidden bg-warm-200">
-        <img
-          src={photos[0]}
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Category pill */}
-        <div className="absolute top-3 left-3">
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-xs font-medium text-charcoal shadow-sm">
-            <span>{getCategoryEmoji(category)}</span>
-            <span className="capitalize">{category}</span>
-          </span>
-        </div>
-        {/* Price */}
-        <div className="absolute top-3 right-3">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-charcoal/80 backdrop-blur-sm text-white text-sm font-semibold">
-            {formatPrice(price)}
-          </span>
-        </div>
+      <img
+        src={photos[0]}
+        alt={title}
+        className="absolute inset-0 w-full h-full object-cover"
+        loading="lazy"
+      />
+
+      {/* Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+      {/* Top badges */}
+      <div className="absolute top-3.5 left-3.5 right-3.5 flex items-start justify-between">
+        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-white text-xs font-medium border border-white/10">
+          {getCategoryEmoji(category)}
+          <span className="capitalize">{category}</span>
+        </span>
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={e => { e.stopPropagation(); setSaved(v => !v) }}
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10"
+        >
+          <Heart
+            className={`w-4 h-4 transition-all duration-200 ${saved ? 'fill-rose-400 text-rose-400 scale-110' : 'text-white'}`}
+          />
+        </motion.button>
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        <h3 className="text-base font-semibold text-charcoal leading-snug mb-3 line-clamp-2">
-          {title}
-        </h3>
-
-        {/* Host row */}
-        <div className="flex items-center gap-2 mb-3">
-          <Avatar src={host.avatar_url} name={host.full_name} size="sm" verified={host.is_verified} />
-          <span className="text-sm text-charcoal-400 font-medium">{host.full_name.split(' ')[0]}</span>
+      {/* Bottom content */}
+      <div className="absolute bottom-0 left-0 right-0 p-4">
+        {/* Price + rating */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-2xl font-bold text-white tracking-tight">
+            {formatPrice(price)}
+            <span className="text-sm font-normal text-white/70 ml-1">/ persona</span>
+          </span>
           {rating && (
-            <div className="ml-auto">
-              <Stars rating={rating} count={review_count} size="xs" />
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/15 backdrop-blur-sm">
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+              <span className="text-sm font-semibold text-white">{rating.toFixed(1)}</span>
+              <span className="text-xs text-white/60">({review_count})</span>
             </div>
           )}
         </div>
 
-        {/* Meta row */}
-        <div className="flex items-center gap-3 text-xs text-charcoal-300">
-          {distance !== undefined && (
-            <span className="flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
-              {formatDistance(distance)}
-            </span>
-          )}
-          {duration && (
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {formatDuration(duration)}
-            </span>
-          )}
-          {experience.max_participants && (
-            <span className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              max {experience.max_participants}
-            </span>
-          )}
+        {/* Title */}
+        <h3 className="text-base font-semibold text-white leading-snug mb-3 line-clamp-2">
+          {title}
+        </h3>
+
+        {/* Host + meta */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <img
+              src={host.avatar_url}
+              alt={host.full_name}
+              className="w-6 h-6 rounded-full object-cover ring-1 ring-white/30"
+            />
+            <span className="text-sm text-white/80 font-medium">{host.full_name.split(' ')[0]}</span>
+          </div>
+          <div className="ml-auto flex items-center gap-3 text-white/60 text-xs">
+            {distance !== undefined && (
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                {formatDistance(distance)}
+              </span>
+            )}
+            {duration && (
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {formatDuration(duration)}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </motion.article>
   )
 }
 
+// ── Hero card (wide, cinematic — for featured slot) ─────────────────────────
+export function ExperienceCardHero({ experience }) {
+  const navigate = useNavigate()
+  const [saved, setSaved] = useState(false)
+  const { id, title, category, photos, host, price, rating, review_count, city, neighborhood } = experience
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+      whileTap={{ scale: 0.985 }}
+      onClick={() => navigate(`/experiences/${id}`)}
+      className="relative h-[52vh] min-h-[320px] rounded-3xl overflow-hidden cursor-pointer select-none mx-4"
+    >
+      <img src={photos[0]} alt={title} className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
+      {/* Top */}
+      <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+          <span>{getCategoryEmoji(category)}</span>
+          <span className="text-white text-xs font-semibold capitalize">{category}</span>
+        </div>
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={e => { e.stopPropagation(); setSaved(v => !v) }}
+          className="w-9 h-9 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10"
+        >
+          <Heart className={`w-4 h-4 ${saved ? 'fill-rose-400 text-rose-400' : 'text-white'}`} />
+        </motion.button>
+      </div>
+
+      {/* Bottom */}
+      <div className="absolute bottom-0 left-0 right-0 p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <MapPin className="w-3 h-3 text-sage-300" />
+          <span className="text-xs text-white/60 font-medium">{neighborhood}, {city}</span>
+          {rating && (
+            <>
+              <span className="text-white/30">·</span>
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+              <span className="text-xs text-white/70 font-medium">{rating.toFixed(1)}</span>
+            </>
+          )}
+        </div>
+        <h2 className="text-xl font-bold text-white leading-snug mb-4 max-w-[85%]">{title}</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img
+              src={host.avatar_url}
+              alt={host.full_name}
+              className="w-8 h-8 rounded-full object-cover ring-2 ring-white/20"
+            />
+            <div>
+              <p className="text-xs text-white/50">con</p>
+              <p className="text-sm font-semibold text-white leading-tight">{host.full_name.split(' ')[0]}</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-white/50">da</p>
+            <p className="text-2xl font-bold text-white tracking-tight">{formatPrice(price)}</p>
+          </div>
+        </div>
+      </div>
+    </motion.article>
+  )
+}
+
+// ── Horizontal compact card (for category rows) ──────────────────────────────
 export function ExperienceCardHorizontal({ experience }) {
   const navigate = useNavigate()
-  const { id, title, photos, host, price, distance, rating } = experience
+  const { id, title, photos, host, price, rating } = experience
 
   return (
     <motion.article
       whileTap={{ scale: 0.97 }}
       onClick={() => navigate(`/experiences/${id}`)}
-      className="flex gap-3 bg-white rounded-2xl overflow-hidden shadow-card cursor-pointer select-none p-3"
+      className="flex gap-3 p-3 bg-white rounded-2xl shadow-card cursor-pointer select-none"
     >
       <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-warm-200">
         <img src={photos[0]} alt={title} className="w-full h-full object-cover" loading="lazy" />
       </div>
-      <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-semibold text-charcoal line-clamp-2 mb-1">{title}</h4>
+      <div className="flex-1 min-w-0 py-0.5">
+        <h4 className="text-sm font-semibold text-charcoal line-clamp-2 mb-1 leading-snug">{title}</h4>
         <p className="text-xs text-charcoal-400">{host.full_name.split(' ')[0]}</p>
-        <div className="flex items-center justify-between mt-1.5">
-          <Stars rating={rating} size="xs" />
-          <span className="text-sm font-semibold text-charcoal">{formatPrice(price)}</span>
+        <div className="flex items-center justify-between mt-2">
+          {rating && (
+            <div className="flex items-center gap-1">
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+              <span className="text-xs font-medium text-charcoal">{rating.toFixed(1)}</span>
+            </div>
+          )}
+          <span className="text-sm font-bold text-charcoal ml-auto">{formatPrice(price)}</span>
         </div>
       </div>
     </motion.article>

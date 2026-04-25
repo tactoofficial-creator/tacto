@@ -36,20 +36,19 @@
     <!-- SW nuke: runs once per deploy to clear stale service workers and caches -->
     <script>
       (function() {
-        var DEPLOY = 'v5';
+        var DEPLOY = 'v7';
         if (localStorage.getItem('sw_deploy') !== DEPLOY) {
           localStorage.setItem('sw_deploy', DEPLOY);
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(regs) {
-              return Promise.all(regs.map(function(r) { return r.unregister(); }));
-            }).then(function() {
-              return caches.keys();
-            }).then(function(keys) {
-              return Promise.all(keys.map(function(k) { return caches.delete(k); }));
-            }).then(function() {
-              window.location.reload();
-            });
-          }
+          function reload() { window.location.reload(true); }
+          var p1 = ('serviceWorker' in navigator)
+            ? navigator.serviceWorker.getRegistrations()
+                .then(function(rs) { return Promise.all(rs.map(function(r) { return r.unregister(); })); })
+                .catch(function() {})
+            : Promise.resolve();
+          var p2 = window.caches
+            ? caches.keys().then(function(ks) { return Promise.all(ks.map(function(k) { return caches.delete(k); })); }).catch(function() {})
+            : Promise.resolve();
+          Promise.all([p1, p2]).then(reload, reload);
         }
       })();
     </script>

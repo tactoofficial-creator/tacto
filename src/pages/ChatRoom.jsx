@@ -5,8 +5,9 @@ import { ArrowLeft, Send, Info, Shield, Phone } from 'lucide-react'
 import { Avatar } from '@/components/ui/Avatar'
 import { Sheet } from '@/components/ui/Sheet'
 import { mockBookings, mockMessages, mockUser } from '@/lib/mockData'
-import { formatMessageTime, formatDateTime } from '@/lib/utils'
+import { formatMessageTime, formatDateTime, detectBypass } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 
 const USE_MOCK = !import.meta.env.VITE_SUPABASE_URL ||
   import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
@@ -54,6 +55,11 @@ export default function ChatRoom() {
   const sendMessage = useCallback(async () => {
     const text = input.trim()
     if (!text || sending) return
+
+    if (detectBypass(text)) {
+      toast.error('Non puoi condividere contatti personali. Usa sempre Tacto per comunicare.', { duration: 4000 })
+      return
+    }
 
     const optimistic = {
       id: `opt-${Date.now()}`,

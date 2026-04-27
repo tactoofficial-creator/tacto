@@ -1,19 +1,21 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, Search } from 'lucide-react'
+import { Bell, Search, MapPin, ChevronDown, Check } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { ExperienceCard, ExperienceCardHero } from '@/components/experience/ExperienceCard'
 import { ExperienceCardSkeleton } from '@/components/ui/Skeleton'
+import { Sheet } from '@/components/ui/Sheet'
 import { useStore } from '@/store/useStore'
 import { mockExperiences } from '@/lib/mockData'
-import { CATEGORIES } from '@/lib/utils'
-import { cn } from '@/lib/utils'
+import { CATEGORIES, CITIES, cn } from '@/lib/utils'
 
 export default function Home() {
   const unread   = useStore(s => s.unreadCount)
   const navigate = useNavigate()
   const [loading] = useState(false)
   const [activeCategory, setActiveCategory] = useState(null)
+  const [cityOpen, setCityOpen] = useState(false)
+  const activeCity = CITIES.find(c => c.active) ?? CITIES[0]
 
   const featured = mockExperiences[0]
   const nearby   = useMemo(() => {
@@ -28,12 +30,23 @@ export default function Home() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white px-5 pt-[calc(env(safe-area-inset-top)+14px)] pb-3">
         <div className="flex items-center justify-between">
-          <span
-            className="text-[24px] font-bold text-charcoal"
-            style={{ letterSpacing: '-0.04em' }}
-          >
-            tacto
-          </span>
+          <div className="flex flex-col">
+            <span
+              className="text-[24px] font-bold text-charcoal leading-none"
+              style={{ letterSpacing: '-0.04em' }}
+            >
+              tacto
+            </span>
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              onClick={() => setCityOpen(true)}
+              className="flex items-center gap-1 mt-1.5"
+            >
+              <MapPin className="w-3 h-3 text-charcoal-400" />
+              <span className="text-xs font-semibold text-charcoal">{activeCity.label}</span>
+              <ChevronDown className="w-3 h-3 text-charcoal-400" />
+            </motion.button>
+          </div>
           <div className="flex items-center gap-2">
             <motion.button
               whileTap={{ scale: 0.9 }}
@@ -62,6 +75,34 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* City sheet */}
+      <Sheet open={cityOpen} onClose={() => setCityOpen(false)} title="Scegli la città">
+        <div className="px-5 pb-10 space-y-2.5">
+          {CITIES.map(city => (
+            <motion.div
+              key={city.id}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => { if (city.active) setCityOpen(false) }}
+              className={`flex items-center gap-3 p-4 rounded-2xl cursor-pointer ${
+                city.active ? 'bg-charcoal' : 'bg-warm-100 opacity-60'
+              }`}
+            >
+              <span className="text-2xl">{city.flag}</span>
+              <span className={`flex-1 text-base font-semibold ${city.active ? 'text-white' : 'text-charcoal'}`}>
+                {city.label}
+              </span>
+              {city.active
+                ? <Check className="w-4 h-4 text-sage" />
+                : <span className="text-xs text-charcoal-400 font-medium">Presto</span>
+              }
+            </motion.div>
+          ))}
+          <p className="text-xs text-charcoal-400 text-center pt-2 leading-relaxed">
+            Stiamo espandendo una città alla volta. Milano è live.
+          </p>
+        </div>
+      </Sheet>
 
       {/* Hero featured */}
       <div className="mb-6">

@@ -80,3 +80,113 @@ export function haversineKm(lat1, lng1, lat2, lng2) {
     Math.sin(dLng / 2) ** 2
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
+
+// ─── Reputation tiers ────────────────────────────────────────────────────────
+
+export const REPUTATION_TIERS = [
+  {
+    id: 'founding_member',
+    label: 'Founding Member',
+    emoji: '🏛️',
+    colorClass: 'text-amber-700',
+    bgClass: 'bg-amber-50',
+    borderClass: 'border-amber-200',
+    description: 'Tra i primi 100 membri di Tacto in Italia — parte della storia.',
+  },
+  {
+    id: 'top_host',
+    label: 'Top Host',
+    emoji: '⭐',
+    colorClass: 'text-sage',
+    bgClass: 'bg-sage-50',
+    borderClass: 'border-sage-200',
+    description: 'Host con valutazione media ≥4.7 e almeno 10 esperienze completate.',
+  },
+  {
+    id: 'trusted_explorer',
+    label: 'Trusted Explorer',
+    emoji: '🧭',
+    colorClass: 'text-blue-600',
+    bgClass: 'bg-blue-50',
+    borderClass: 'border-blue-200',
+    description: 'Ha completato 5+ esperienze con feedback positivi costanti.',
+  },
+  {
+    id: 'elite_connector',
+    label: 'Elite Connector',
+    emoji: '🔗',
+    colorClass: 'text-purple-600',
+    bgClass: 'bg-purple-50',
+    borderClass: 'border-purple-200',
+    description: 'Connettore di riferimento — ha invitato amici e fatto crescere la community.',
+  },
+  {
+    id: 'city_leader',
+    label: 'Milan Social Leader',
+    emoji: '🏙️',
+    colorClass: 'text-charcoal',
+    bgClass: 'bg-warm-100',
+    borderClass: 'border-charcoal-200',
+    description: 'Tra le persone più attive e rispettate della community di Milano.',
+  },
+]
+
+export function getTier(tierId) {
+  return REPUTATION_TIERS.find(t => t.id === tierId) ?? null
+}
+
+// ─── Trust score (0-100) ─────────────────────────────────────────────────────
+
+export function calculateTrustScore(user) {
+  if (!user) return 0
+  let score = 0
+  if (user.is_verified)                         score += 40
+  if (user.bio && user.bio.length > 20)         score += 10
+  if (user.avatar_url)                          score += 5
+  if (user.email)                               score += 5
+  score += Math.min(20, (user.completed_bookings ?? 0) * 4)
+  if ((user.rating ?? 0) >= 4.5)               score += 10
+  score += Math.min(10, (user.experience_count ?? 0))
+  return Math.min(100, score)
+}
+
+export function trustScoreLabel(score) {
+  if (score >= 80) return 'Eccellente'
+  if (score >= 60) return 'Buono'
+  if (score >= 40) return 'In crescita'
+  return 'Nuovo'
+}
+
+export function trustScoreColor(score) {
+  if (score >= 80) return '#4A7C6F'  // sage
+  if (score >= 60) return '#F59E0B'  // amber
+  return '#9CA3AF'                   // gray
+}
+
+// ─── Cities ──────────────────────────────────────────────────────────────────
+
+export const CITIES = [
+  { id: 'Milano',     label: 'Milano',      flag: '🇮🇹', active: true },
+  { id: 'Barcellona', label: 'Barcellona',  flag: '🇪🇸', active: false },
+  { id: 'Lisbona',    label: 'Lisbona',     flag: '🇵🇹', active: false },
+]
+
+// ─── Anti-bypass detection ───────────────────────────────────────────────────
+
+const BYPASS_PATTERNS = [
+  /\b(\+?[\d][\s\d\-\(\)\.]{7,}[\d])\b/,
+  /@[\w.]{2,}/,
+  /instagram|ig\s*[:=]/i,
+  /whatsapp|wa[.\-]?me\b|wapp/i,
+  /telegram|t[.\-]me\b/i,
+  /\b[\w.+%-]{2,}@[\w-]+\.[a-z]{2,}\b/i,
+  /\bsignal\b/i,
+  /facebook|fb[.\-]com/i,
+  /snapchat/i,
+  /tiktok/i,
+  /discord\.gg/i,
+]
+
+export function detectBypass(text) {
+  return BYPASS_PATTERNS.some(rx => rx.test(text))
+}

@@ -14,7 +14,9 @@ export const mockHosts = [
     is_verified: true,
     rating: 4.9,
     experience_count: 47,
+    completed_bookings: 47,
     joined: '2023-03',
+    reputation_tiers: ['founding_member', 'top_host'],
   },
   {
     id: 'h2',
@@ -25,7 +27,9 @@ export const mockHosts = [
     is_verified: true,
     rating: 4.8,
     experience_count: 31,
+    completed_bookings: 31,
     joined: '2023-06',
+    reputation_tiers: ['trusted_explorer', 'top_host'],
   },
   {
     id: 'h3',
@@ -36,7 +40,9 @@ export const mockHosts = [
     is_verified: true,
     rating: 5.0,
     experience_count: 22,
+    completed_bookings: 22,
     joined: '2023-09',
+    reputation_tiers: ['top_host', 'city_leader'],
   },
   {
     id: 'h4',
@@ -47,7 +53,9 @@ export const mockHosts = [
     is_verified: false,
     rating: 4.7,
     experience_count: 18,
+    completed_bookings: 18,
     joined: '2024-01',
+    reputation_tiers: [],
   },
   {
     id: 'h5',
@@ -58,7 +66,9 @@ export const mockHosts = [
     is_verified: true,
     rating: 4.9,
     experience_count: 35,
+    completed_bookings: 35,
     joined: '2023-04',
+    reputation_tiers: ['top_host', 'trusted_explorer'],
   },
 ]
 
@@ -290,4 +300,17 @@ export const mockUser = {
   role: 'both',
   lat: 45.462,
   lng: 9.190,
+  reputation_tiers: ['trusted_explorer'],
+  completed_bookings: 1,
+  social_wallet_balance: 180,
+  referral_code: 'ALESSIO24',
+  referral_count: 3,
 }
+
+export const mockWalletTransactions = [
+  { id: 'w1', type: 'earned', amount: 50, label: 'Prima prenotazione completata', date: '2024-05-18' },
+  { id: 'w2', type: 'earned', amount: 30, label: 'Referral: Marco T.', date: '2024-05-22' },
+  { id: 'w3', type: 'earned', amount: 50, label: 'Referral: Sara V.', date: '2024-06-01' },
+  { id: 'w4', type: 'spent', amount: -30, label: 'Sconto su Aperitivo Sofia', date: '2024-06-10' },
+  { id: 'w5', type: 'earned', amount: 80, label: 'Bonus Trusted Explorer', date: '2024-06-11' },
+]

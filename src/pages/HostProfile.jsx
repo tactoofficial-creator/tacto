@@ -7,13 +7,15 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ExperienceCardHorizontal } from '@/components/experience/ExperienceCard'
 import { mockHosts, mockExperiences } from '@/lib/mockData'
-import { formatDate } from '@/lib/utils'
+import { getTier, calculateTrustScore, trustScoreColor, trustScoreLabel } from '@/lib/utils'
 
 export default function HostProfile() {
   const { id } = useParams()
   const navigate = useNavigate()
   const host = mockHosts.find(h => h.id === id) ?? mockHosts[0]
   const experiences = mockExperiences.filter(e => e.host.id === id || e.host.id === 'h1').slice(0, 3)
+  const tiers = (host.reputation_tiers ?? []).map(t => getTier(t)).filter(Boolean)
+  const trustScore = calculateTrustScore(host)
 
   return (
     <div className="flex flex-col bg-white min-h-screen-safe">
@@ -83,19 +85,29 @@ export default function HostProfile() {
             <Badge variant="amber">
               <Star className="w-3 h-3" /> Host dal {host.joined}
             </Badge>
-            {host.experience_count > 20 && (
-              <Badge variant="default">
-                <Award className="w-3 h-3" /> Superhost
-              </Badge>
-            )}
           </div>
 
+          {/* Reputation tiers */}
+          {tiers.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {tiers.map(tier => (
+                <div
+                  key={tier.id}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${tier.bgClass} ${tier.borderClass}`}
+                >
+                  <span className="text-sm leading-none">{tier.emoji}</span>
+                  <span className={`text-xs font-semibold ${tier.colorClass}`}>{tier.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="grid grid-cols-3 gap-3 mb-4">
             {[
               { label: 'Valutazione', value: host.rating?.toFixed(1) ?? '—', icon: <Star className="w-4 h-4 fill-amber-400 text-amber-400" /> },
               { label: 'Esperienze', value: host.experience_count, icon: <Award className="w-4 h-4 text-sage" /> },
-              { label: 'Completate', value: host.experience_count, icon: <Shield className="w-4 h-4 text-charcoal-400" /> },
+              { label: 'Completate', value: host.completed_bookings ?? host.experience_count, icon: <Shield className="w-4 h-4 text-charcoal-400" /> },
             ].map(stat => (
               <div key={stat.label} className="flex flex-col items-center p-3 bg-warm rounded-2xl gap-1">
                 {stat.icon}
@@ -103,6 +115,25 @@ export default function HostProfile() {
                 <span className="text-xs text-charcoal-400">{stat.label}</span>
               </div>
             ))}
+          </div>
+
+          {/* Trust Score bar */}
+          <div className="p-3.5 bg-warm rounded-2xl mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-charcoal-400 uppercase tracking-wider">Trust Score</span>
+              <span className="text-sm font-bold" style={{ color: trustScoreColor(trustScore) }}>
+                {trustScore}/100 · {trustScoreLabel(trustScore)}
+              </span>
+            </div>
+            <div className="h-1.5 bg-charcoal-100 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${trustScore}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                className="h-full rounded-full"
+                style={{ background: trustScoreColor(trustScore) }}
+              />
+            </div>
           </div>
 
           {/* Bio */}
